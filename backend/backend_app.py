@@ -15,6 +15,8 @@ def post():
     if request.method == "POST":
         title = request.json['title']
         content = request.json['content']
+        if title == "" or content == "":
+            return "", 400
         if not POSTS:
             new_id = 1
         else:
