@@ -32,6 +32,20 @@ def post():
     else:
         return jsonify(POSTS)
 
+@app.route('/api/posts/<id>', methods = ['DELETE'])
+def delete_post(id):
+    current_ids = [post['id'] for post in POSTS]
+    post_id = int(id)
+    if post_id not in current_ids:
+        return "", 404
+    else:
+        for post in POSTS:
+            if post_id == post['id']:
+                POSTS.remove(post)
+        confirmation = {"message": f"Post with id {post_id} has been deleted successfully."}
+        return jsonify(confirmation), 200
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
