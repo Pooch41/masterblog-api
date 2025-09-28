@@ -32,18 +32,41 @@ def post():
     else:
         return jsonify(POSTS)
 
-@app.route('/api/posts/<id>', methods = ['DELETE'])
-def delete_post(id):
-    current_ids = [post['id'] for post in POSTS]
-    post_id = int(id)
-    if post_id not in current_ids:
-        return "", 404
+@app.route('/api/posts/<id>', methods = ['DELETE', 'PUT'])
+def modify_post(id):
+    if request.method == 'DELETE':
+        current_ids = [post['id'] for post in POSTS]
+        post_id = int(id)
+        if post_id not in current_ids:
+            return "", 404
+        else:
+            for post in POSTS:
+                if post_id == post['id']:
+                    POSTS.remove(post)
+                    break
+            confirmation = {"message": f"Post with id {post_id} has been deleted successfully."}
+            return jsonify(confirmation), 200
     else:
+        title = request.json['title']
+        content = request.json['content']
+        current_ids = [post['id'] for post in POSTS]
+        post_id = int(id)
+        if post_id not in current_ids:
+            return "", 404
+
+        modified_post = None
         for post in POSTS:
             if post_id == post['id']:
-                POSTS.remove(post)
-        confirmation = {"message": f"Post with id {post_id} has been deleted successfully."}
-        return jsonify(confirmation), 200
+                if title != "":
+                    post['title'] = title
+                if content != "":
+                    post['content'] = content
+                modified_post = post
+                break
+
+
+        return jsonify(modified_post), 200
+
 
 
 
