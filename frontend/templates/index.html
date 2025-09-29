@@ -10,18 +10,40 @@
 <body>
     <div class="container">
         <h1>📚 Blog Posts</h1>
-        <div class="input-field">
+
+        <div class="input-group api-url-group">
             <input type="text" id="api-base-url" placeholder="Enter API Base URL" value="http://127.0.0.1:5002/api">
-            <button onclick="loadPosts()">Load Posts</button>
+            <button onclick="loadPosts()">Load/Sort Posts</button>
         </div>
-        <div class="input-field">
-            <input type="text" id="post-title" placeholder="Enter Post Title">
-            <input type="text" id="post-content" placeholder="Enter Post Content">
+
+        <div class="input-group sort-controls">
+            <h3>Sort By:</h3>
+            <div class="input-fields">
+                <select id="sort-by-select" onchange="updateSortUrl()">
+                    <option value="date">Date</option>
+                    <option value="author">Author</option>
+                    <option value="title">Title</option>
+                    <option value="content">Content</option>
+                </select>
+                <select id="sort-order-select" onchange="updateSortUrl()">
+                    <option value="desc">Descending (Newest/Z-A)</option>
+                    <option value="asc">Ascending (Oldest/A-Z)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-group add-post-group">
+            <h3>Add New Post</h3>
+            <div class="input-fields">
+                <input type="text" id="post-title" placeholder="Title">
+                <input type="text" id="post-content" placeholder="Content">
+                <input type="text" id="post-author" placeholder="Author Name">
+                </div>
             <button onclick="addPost()">Add Post</button>
         </div>
+
         <div id="post-container">
-            <!-- Blog posts will be inserted here by JavaScript -->
-        </div>
+            </div>
     </div>
 
     <script src="static/main.js"></script>
