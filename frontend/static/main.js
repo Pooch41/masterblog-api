@@ -2,7 +2,7 @@ function getUrlParams() {
     return new URLSearchParams(window.location.search);
 }
 
-window.onload = function () {
+window.onload = function() {
     var savedBaseUrl = localStorage.getItem('apiBaseUrl');
 
     if (savedBaseUrl) {
@@ -11,6 +11,7 @@ window.onload = function () {
     const params = getUrlParams();
     const sortBy = params.get('sort_by');
     const sortOrder = params.get('sort_order');
+
     if (sortBy) {
         document.getElementById('sort-by-select').value = sortBy;
     }
@@ -25,29 +26,40 @@ window.onload = function () {
 function updateSortUrl() {
     const sortBy = document.getElementById('sort-by-select').value;
     const sortOrder = document.getElementById('sort-order-select').value;
-
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
     params.set('sort_by', sortBy);
     params.set('sort_order', sortOrder);
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     history.pushState(null, '', newUrl);
-
+    loadPosts();
+}
+function clearSearchAndLoad() {
+    document.getElementById('search-query').value = '';
+    document.getElementById('search-by-select').value = 'title'; // Resets to default
     loadPosts();
 }
 
-
-// Function to fetch all the posts from the API and display them on the page
 function loadPosts() {
     var baseUrl = document.getElementById('api-base-url').value;
-    localStorage.setItem('apiBaseUrl', baseUrl);
-
+    localStorage.setItem('apiBaseUrl', baseUrl)
+    const searchBy = document.getElementById('search-by-select').value;
+    const searchQuery = document.getElementById('search-query').value.trim();
     const params = getUrlParams();
     const sortBy = params.get('sort_by') || 'date';
     const sortOrder = params.get('sort_order') || 'desc';
 
-    const queryString = `?sort_by=${sortBy}&sort_order=${sortOrder}`;
+    let apiUrl = baseUrl;
+    let queryString = `?sort_by=${sortBy}&sort_order=${sortOrder}`;
 
-    fetch(baseUrl + '/posts' + queryString)
+    if (searchQuery) {
+        apiUrl += '/search';
+        const combinedSearchTerm = `${searchBy}:${searchQuery}`;
+        queryString = `?query=${encodeURIComponent(combinedSearchTerm)}&sort_by=${sortBy}&sort_order=${sortOrder}`;
+
+    } else {
+        apiUrl += '/posts';
+    }
+    fetch(apiUrl + queryString)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -57,6 +69,10 @@ function loadPosts() {
         .then(data => {
             const postContainer = document.getElementById('post-container');
             postContainer.innerHTML = '';
+
+            if (data.length === 0) {
+                 postContainer.innerHTML = `<p class="no-posts-message">No posts found matching your criteria. Try a different search term or clear the filter.</p>`;
+            }
 
             data.forEach(post => {
                 const postDiv = document.createElement('div');
@@ -81,7 +97,7 @@ function addPost() {
     var baseUrl = document.getElementById('api-base-url').value;
     var postTitle = document.getElementById('post-title').value;
     var postContent = document.getElementById('post-content').value;
-    var postAuthor = document.getElementById('post-author').value; // *** NEW FIELD ***
+    var postAuthor = document.getElementById('post-author').value;
 
     if (!postTitle || !postContent || !postAuthor) {
         alert('Please fill in the Title, Content, and Author fields.');
@@ -100,46 +116,44 @@ function addPost() {
         author: postAuthor,
         date: postDate
     };
+
     fetch(baseUrl + '/posts', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(postData)
     })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.error || `HTTP error! Status: ${response.status}`);
-                });
-            }
-            return response.json();
-        })
-        .then(post => {
-            console.log('Post added:', post);
-            document.getElementById('post-title').value = '';
-            document.getElementById('post-content').value = '';
-            document.getElementById('post-author').value = '';
-            loadPosts();
-        })
-        .catch(error => {
-            console.error('Error adding post:', error.message);
-            alert('Failed to add post: ' + error.message);
-        });
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error || `HTTP error! Status: ${response.status}`); });
+        }
+        return response.json();
+    })
+    .then(post => {
+        console.log('Post added:', post);
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-content').value = '';
+        document.getElementById('post-author').value = '';
+        loadPosts();
+    })
+    .catch(error => {
+        console.error('Error adding post:', error.message);
+        alert('Failed to add post: ' + error.message);
+    });
 }
-
 function deletePost(postId) {
     var baseUrl = document.getElementById('api-base-url').value;
     fetch(baseUrl + '/posts/' + postId, {
         method: 'DELETE'
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            console.log(`Post ${postId} deleted.`);
-            loadPosts();
-        })
-        .catch(error => {
-            console.error('Error deleting post:', error);
-            alert('Failed to delete post.');
-        });
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        console.log(`Post ${postId} deleted.`);
+        loadPosts();
+    })
+    .catch(error => {
+        console.error('Error deleting post:', error);
+        alert('Failed to delete post.');
+    });
 }

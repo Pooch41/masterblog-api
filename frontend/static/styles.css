@@ -33,30 +33,9 @@ h1 {
     background-color: #f9f9f9;
 }
 
-.api-url-group {
-    display: flex;
-    align-items: center;
-}
-
-.api-url-group input {
-    flex-grow: 1;
-    margin-right: 10px;
-}
-
-.add-post-group h3 {
-    margin-top: 0;
-    color: #333;
-}
-
-.input-fields {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
-
 .input-group input,
-.input-group button {
+.input-group button,
+.input-group select {
     height: 40px;
     padding: 10px;
     font-size: 14px;
@@ -64,12 +43,25 @@ h1 {
     border-radius: 6px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
+    flex-grow: 1;
 }
 
-.input-fields input {
+.api-url-group,
+.input-fields {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.api-url-group input {
+    min-width: 250px;
+}
+
+.input-fields input,
+.input-fields select {
     flex: 1;
-    min-width: 150px;
-    margin-right: 0;
+    min-width: 120px;
 }
 
 .input-group button {
@@ -78,7 +70,8 @@ h1 {
     cursor: pointer;
     border: none;
     padding: 0 20px;
-    height: 40px;
+    flex-grow: 0;
+    min-width: fit-content;
 }
 
 .input-group button:hover {
@@ -86,8 +79,26 @@ h1 {
     box-shadow: 0 4px 10px rgba(68, 102, 238, 0.3);
 }
 
+.search-controls button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.search-controls button:hover {
+    background-color: #e0e0e0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .input-group input::placeholder {
     color: #aaa;
+}
+
+.input-group h3 {
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
 .post {
@@ -107,6 +118,7 @@ h1 {
     font-weight: 700;
 }
 
+
 .post-meta {
     margin: 0 0 15px;
     font-size: 13px;
@@ -120,6 +132,7 @@ h1 {
     color: #333;
     line-height: 1.6;
 }
+
 
 .post button {
     position: absolute;
@@ -137,17 +150,4 @@ h1 {
 
 .post button:hover {
     background-color: #cc0000;
-}
-
-.input-group select {
-    height: 40px;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
-    background-color: #fff;
-    cursor: pointer;
-    flex: 1;
-    min-width: 150px;
 }

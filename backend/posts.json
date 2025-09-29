@@ -12,5 +12,12 @@
         "content": "Lmao",
         "author": "The Dude",
         "date": "2025-09-29"
+    },
+    {
+        "id": 3,
+        "title": "Boo",
+        "content": "I'm a ghost",
+        "author": "Poltergeist",
+        "date": "2025-09-29"
     }
 ]

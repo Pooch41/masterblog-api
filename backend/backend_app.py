@@ -120,25 +120,35 @@ def modify_post(id):
         save_posts(POSTS)
         return jsonify(modified_post), 200
 
-@app.route('/api/posts/search', methods = ['GET'])
+
+@app.route('/api/search', methods=['GET'])
 def search_post():
     POSTS = load_posts()
-    args_list = list(request.args.items())
+    search_param = request.args.get('query')
+    sort_by = request.args.get('sort_by', 'date')
+    sort_order = request.args.get('sort_order', 'desc')
+    if not search_param:
+        return jsonify(sort_posts_list(POSTS, sort_by, sort_order)), 200
+    try:
+        search_by, search_query = search_param.split(':', 1)
+    except ValueError:
+        return jsonify({"error": "Invalid search query format. Must be 'field:term'."}), 400
 
-    if len(args_list) != 1:
-        return jsonify([]), 200
+    valid_fields = ['title', 'content', 'author', 'date']
+    if search_by.lower() not in valid_fields:
+        return jsonify({"error": f"Invalid search field: {search_by}"}), 400
 
-    search_by, search_query = args_list[0]
-
-    if search_by not in ['title', 'content', 'author', 'date']:
-        return jsonify([]), 200
+    search_by = search_by.lower()
+    search_query = search_query.lower()
 
     found_posts = []
     for post in POSTS:
-        if search_query.lower() in post[search_by].lower():
+        if search_by in post and search_query in str(post[search_by]).lower():
             found_posts.append(post)
 
-    return jsonify(found_posts), 200
+    sorted_posts = sort_posts_list(found_posts, sort_by, sort_order)
+
+    return jsonify(sorted_posts), 200
 
 
 if __name__ == '__main__':

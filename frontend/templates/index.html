@@ -16,6 +16,22 @@
             <button onclick="loadPosts()">Load/Sort Posts</button>
         </div>
 
+        <div class="input-group search-controls">
+            <h3>Search Posts:</h3>
+            <div class="input-fields">
+                <select id="search-by-select">
+                    <option value="title">Title</option>
+                    <option value="content">Content</option>
+                    <option value="author">Author</option>
+                </select>
+                <input type="text" id="search-query" placeholder="Enter search term...">
+
+                <button onclick="loadPosts()">Search</button>
+
+                <button onclick="clearSearchAndLoad()">Clear Filter</button>
+            </div>
+        </div>
+
         <div class="input-group sort-controls">
             <h3>Sort By:</h3>
             <div class="input-fields">
@@ -38,7 +54,7 @@
                 <input type="text" id="post-title" placeholder="Title">
                 <input type="text" id="post-content" placeholder="Content">
                 <input type="text" id="post-author" placeholder="Author Name">
-                </div>
+            </div>
             <button onclick="addPost()">Add Post</button>
         </div>
 
